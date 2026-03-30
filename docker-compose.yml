@@ -1,0 +1,31 @@
+
+services:
+  backend:
+    image: eradesdario/drivecord-backend:latest
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/db:/app/db
+    environment:
+      - NODE_ENV=production
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID}
+      - JWT_SECRET=${JWT_SECRET}
+    restart: always
+
+  frontend:
+    image: eradesdario/drivecord-frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_API_URL=/api
+    ports:
+      - "3030:80"
+    depends_on:
+      - backend
+    restart: always
